@@ -54,6 +54,8 @@ for(const item of itemsToCollect){
     
 }
 
+const CollectionItems =  document.querySelector('input[name=items]')
+
 let selectedItems = [];
 
 function selectItem(event) {
@@ -83,7 +85,8 @@ function selectItem(event) {
     }
 
     console.log(selectedItems)
-    document.querySelector('input[name=items]')
+    CollectionItems.value = selectedItems
+   
 }
 
 
