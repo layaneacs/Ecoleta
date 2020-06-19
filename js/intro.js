@@ -1,41 +1,77 @@
-
-
 function populateUFs() {
     var ufSelect = document.querySelector('select[name=uf]')   
 
     fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-        .then( res => { return res.json()})
+        .then( res => res.json())
         .then( states => {
-            states.forEach(element => {
-                ufSelect.innerHTML += `<option value="${element.id}">${element.nome}</option>`
-            });
+            for(const state of states){
+                ufSelect.innerHTML += `<option value="${state.id}">${state.nome}</option>`
+            }
         })
 }
-
+    
 populateUFs()
 
 
 function getCities(event){
-    var citySelect = document.querySelector('select[name=city]')
+    const citySelect = document.querySelector('select[name=city]')
     var stateInput = document.querySelector('input[name=state]')
-
-    var valueUf = event.target.value
-
-    var indexOfSelect = event.target.selectedIndex
+    
+    
+    const valueUf = event.target.value
+    
+    const indexOfSelect = event.target.selectedIndex
     stateInput.value = event.target.options[indexOfSelect].text
+    
+    console.log(valueUf)
+    let url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${valueUf}/municipios`
 
-    var url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${valueUf}/municipios`
+    citySelect.innerHTML = "<option value>Seleciona a Cidade</option>";
+    citySelect.disabled = true;
 
     fetch(url)
         .then(res => res.json())
         .then(cities => {
-            cities.forEach(element => {
-                citySelect.innerHTML += `<option value="${element.id}">${element.nome}</option>`
-                citySelect.disabled = false
-            })
+            citySelect.innerHTML = ""
+            for(const element of cities){
+                citySelect.innerHTML += `<option value="${element.nome}">${element.nome}</option>`                
+            }
+            citySelect.disabled = false
         })
 }
 
 document
     .querySelector('select[name=uf]')
     .addEventListener("change", getCities);
+    
+// itens de coleta
+const itemsToCollect = document.querySelectorAll(".itens-grid li")
+
+
+for(item of itemsToCollect){
+    item.addEventListener('click', selectItem)
+    
+}
+
+let selectedItems = [];
+
+function selectItem(event) {
+    const itemLi = event.target;
+
+    //-- add ou remover uma classe com js - se já tiver remove, se não tiver add
+    itemLi.classList.toggle('select')
+
+    const itemId = itemLi.dataset.id  
+    
+    //verifica se existem itens selecionados, se sim, pegar os itens selecionados
+    const isSelected = selectedItems.findIndex(item => item == itemId )
+
+    // se já tiver selecionado , tirar da seleção
+    if(isSelected >= 0){
+        const filterItem = selectedItems.filter(item => item != itemId)
+    }
+     
+    
+}
+
+console.log(selectedItems)
